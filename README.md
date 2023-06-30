@@ -4,7 +4,7 @@ NewsMonkey is a news app that provides quick daily news bites on a variety of to
 
 ## Getting Started
 
-To get started with NewsMonkey, you can simply open this HTML file in a web browser. However, if you want to make modifications to the code or run the website locally, you will need to follow these steps:
+To get started with NewsMonkey, you will need to follow these steps:
 
 1. Install Node.js and npm on your computer if you haven't already done so.
 2. Clone this repository to your local machine.
