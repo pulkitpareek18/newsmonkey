@@ -24,11 +24,22 @@ export class Navbar extends Component {
       document.documentElement.setAttribute("data-bs-theme",theme)
       theme==="light"?themeIconButton.classList.add("btn-light"):themeIconButton.classList.add("btn-dark");
     }
-
-    this.state.themeIcon === darkModeIcon? this.setState({themeIcon: lightModeIcon},changeTheme("dark")) : this.setState({themeIcon: darkModeIcon},changeTheme("light"))
+   
+    if(localStorage.getItem("theme")==="light"||null){
+      this.setState({themeIcon:lightModeIcon})
+      localStorage.setItem("theme","dark")
+      changeTheme("dark")
+    }else{
+      this.setState({themeIcon:darkModeIcon})
+      localStorage.setItem("theme","light")
+      changeTheme("light")
+    }
 
   }
 
+  componentDidMount(){
+    this.toggleTheme()
+  }
 
 
 
@@ -46,15 +57,15 @@ export class Navbar extends Component {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
               <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" to="/">Home</Link>
+                <Link className="nav-link" id='home' aria-current="page" to="/">Home</Link>
               </li>
 
-              <li><Link className="nav-link" to="/business">Business</Link></li>
-              <li><Link className="nav-link" to="/entertainment">Entertainment</Link></li>
-              <li><Link className="nav-link" to="/health">Health</Link></li>
-              <li><Link className="nav-link" to="/science">Science</Link></li>
-              <li><Link className="nav-link" to="/sports">Sports</Link></li>
-              <li><Link className="nav-link" to="/technology">Technology</Link></li>
+              <li><Link className="nav-link" id='business' to="/business">Business</Link></li>
+              <li><Link className="nav-link" id='entertainment' to="/entertainment">Entertainment</Link></li>
+              <li><Link className="nav-link" id='health' to="/health">Health</Link></li>
+              <li><Link className="nav-link" id='science' to="/science">Science</Link></li>
+              <li><Link className="nav-link" id='sports' to="/sports">Sports</Link></li>
+              <li><Link className="nav-link" id='technology' to="/technology">Technology</Link></li>
 
             </ul>
 

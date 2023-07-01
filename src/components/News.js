@@ -15,6 +15,7 @@ export class News extends Component {
     category: PropTypes.string
   }
 
+
   constructor() {
     super();
     this.state = {
@@ -24,37 +25,38 @@ export class News extends Component {
     }
   }
 
-
-  async componentDidMount() {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=65d3887e33de454c81ca60d10de6aed1&page=${this.state.page}&pageSize=${this.props.pageSize}`
+  
+  async updateNews(){
+    this.setState({loading: true})
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=b16ea3f554b248ccbc272f984806f6a9&page=${this.state.page}&pageSize=${this.props.pageSize}`
     let data = await fetch(url)
     let parsedData = await data.json()
     this.setState({ totalArticles : parsedData.totalResults })
     this.setState({ articles : parsedData.articles })
     this.setState({totalPage : Math.ceil(this.state.totalArticles / this.props.pageSize)})
     this.setState({loading: false})
+ }
+
+
+  async componentDidMount() {
+    this.updateNews()
+    var navLinks = document.getElementsByClassName("nav-link");
+    Array.from(navLinks).forEach(function(link) {
+      link.classList.remove("active");
+    });
+    document.getElementById(this.props.elementId).classList.add("active")
   }
 
+ 
+
   handlePreviousClick = async () => {
-    this.setState({loading: true})
-    this.setState({ page: (this.state.page - 1) }, async function(){ //Passing the main function as callback so that the function run after the state is changed. State changes are asynchronus so changes does not take effect immediately.
-      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=65d3887e33de454c81ca60d10de6aed1&page=${this.state.page}&pageSize=${this.props.pageSize}`
-      let data = await fetch(url)
-      let parsedData = await data.json()
-      this.setState({ articles: parsedData.articles });
-      this.setState({loading: false})
-    });
+    this.setState({ page: (this.state.page - 1) }, this.updateNews )
+    //Passing the update news function as callback so that the function will run only after the state is changed. State changes are asynchronus so changes does not take effect immediately.
   }
 
   handleNextClick = async () => {
-    this.setState({loading: true})
-    this.setState({ page: (this.state.page + 1) }, async function(){
-      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=65d3887e33de454c81ca60d10de6aed1&page=${this.state.page}&pageSize=${this.props.pageSize}`
-      let data = await fetch(url)
-      let parsedData = await data.json()
-      this.setState({ articles: parsedData.articles });
-      this.setState({loading: false})
-    });
+    this.setState({ page: (this.state.page + 1) }, this.updateNews )
+    //Passing the update news function as callback so that the function will run only after the state is changed. State changes are asynchronus so changes does not take effect immediately.
   }
 
 
@@ -68,7 +70,7 @@ export class News extends Component {
           {!this.state.loading && this.state.articles.map((element) => {
 
             return <div key={element.url} className="col-md-4 my-2">
-              <NewsItem title={element.title} description={element.description} imageUrl={element.urlToImage} newsUrl={element.url} noImageUrl="https://www.thoughtco.com/thmb/8-ESkbj1uvljxXhh4G-1J8bpiLw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/politician-talking-into-reporters--microphones-168961271-59a09230af5d3a0011ef552d.jpg" />
+              <NewsItem title={element.title} description={element.description} imageUrl={element.urlToImage} newsUrl={element.url} noImageUrl="https://www.thoughtco.com/thmb/8-ESkbj1uvljxXhh4G-1J8bpiLw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/politician-talking-into-reporters--microphones-168961271-59a09230af5d3a0011ef552d.jpg" date={element.publishedAt} author={element.author} source={element.source.name} />
             </div>
 
           })}
@@ -77,8 +79,8 @@ export class News extends Component {
 
         </div>
         <div className="container d-flex justify-content-between">
-          <button onClick={this.handlePreviousClick} disabled={this.state.page <= 1 ? true : false} className="btn btn-secondary">&larr; Previous</button>
-          <button onClick={this.handleNextClick} disabled={this.state.page >= this.state.totalPage ? true : false} className="btn btn-secondary">Next &rarr;</button>
+          <button onClick={this.handlePreviousClick} disabled={this.state.page <= 1 ? true : false} className="btn btn-outline-primary">&larr; Previous</button>
+          <button onClick={this.handleNextClick} disabled={this.state.page >= this.state.totalPage ? true : false} className="btn btn-outline-primary">Next &rarr;</button>
         </div>
       </div>
     )
