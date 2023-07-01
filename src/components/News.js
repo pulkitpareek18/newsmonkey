@@ -28,7 +28,7 @@ export class News extends Component {
   
   async updateNews(){
     this.setState({loading: true})
-    let url = `https://corsproxy.io/?https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=b16ea3f554b248ccbc272f984806f6a9&page=${this.state.page}&pageSize=${this.props.pageSize}`
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=b16ea3f554b248ccbc272f984806f6a9&page=${this.state.page}&pageSize=${this.props.pageSize}`
     let data = await fetch(url)
     let parsedData = await data.json()
     this.setState({ totalArticles : parsedData.totalResults })
