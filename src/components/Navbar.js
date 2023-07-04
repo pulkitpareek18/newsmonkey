@@ -1,54 +1,61 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import lightModeIcon from "./../light_mode.svg"
 import darkModeIcon from "./../dark_mode.svg"
 
-export class Navbar extends Component {
-
-  constructor(){
-    super();
-
-    this.state = {
-      themeIcon: darkModeIcon
-    }
-
-  }
-
-  toggleTheme = () => {
-
+const Navbar = (props) => {
+  const [themeIcon, setthemeIcon] = useState(lightModeIcon)
+  
+  const changeTheme = useCallback((theme) => {
     let themeIconButton = document.getElementById("themeIconButton")
     themeIconButton.classList.remove("btn-light")
     themeIconButton.classList.remove("btn-dark")
-
-    const changeTheme = (theme) => {
-      document.documentElement.setAttribute("data-bs-theme",theme)
-      theme==="light"?themeIconButton.classList.add("btn-light"):themeIconButton.classList.add("btn-dark");
+    document.documentElement.setAttribute("data-bs-theme", theme)
+    theme === "light" ? themeIconButton.classList.add("btn-light") : themeIconButton.classList.add("btn-dark");
+    if(theme === "light"){
+      themeIconButton.classList.add("btn-light")
+      setthemeIcon(darkModeIcon)
+      themeIconButton.setAttribute("title","Enable Dark Mode")
+    }else if(theme === "dark"){
+      setthemeIcon(lightModeIcon)
+      themeIconButton.setAttribute("title","Enable Light Mode")
     }
-   
-    if(localStorage.getItem("theme")==="light"||null){
-      this.setState({themeIcon:lightModeIcon})
-      localStorage.setItem("theme","dark")
+    // console.log("change theme")
+  },[setthemeIcon])
+
+
+  const toggleTheme = () => {
+    if (localStorage.getItem("theme") === "light") {
+      setthemeIcon(lightModeIcon)
+      localStorage.setItem("theme", "dark")
       changeTheme("dark")
-    }else{
-      this.setState({themeIcon:darkModeIcon})
-      localStorage.setItem("theme","light")
+    } else {
+      setthemeIcon(darkModeIcon)
+      localStorage.setItem("theme", "light")
       changeTheme("light")
     }
-
+    // console.log("toggle theme")
   }
 
-  componentDidMount(){
-    this.toggleTheme()
-  }
+  const setDefaultTheme = useCallback(() => {
+    if(localStorage.getItem("theme")===null){
+      changeTheme("light")
+      return
+    }
+    changeTheme(localStorage.getItem('theme'))
+  },[changeTheme])
+ 
+  useEffect(() => {
+    setDefaultTheme()
+  }, [setDefaultTheme]);
 
 
 
-  render() {
     return (
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
 
         <div className="container-fluid">
-        <Link key="websiteName" style={{background: '-webkit-linear-gradient(0deg, rgb(216, 0, 255), rgb(0 255 255), red)',WebkitBackgroundClip: 'text',WebkitTextFillColor: 'transparent', fontWeight: "500"}} className="navbar-brand" to="/">NewsMonkey</Link>
+          <Link key="websiteName" style={{ background: '-webkit-linear-gradient(0deg, rgb(216, 0, 255), rgb(0 255 255), red)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: "500" }} className="navbar-brand" to="/">NewsMonkey</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon" />
           </button>
@@ -74,17 +81,17 @@ export class Navbar extends Component {
               <button className="btn btn-outline-success" type="submit">Search</button>
             </form> */}
 
-          <div className="d-flex align-items-center">
-            <button id='themeIconButton' title="Enable Dark Mode" className="btn btn-light rounded-circle btn-light d-flex align-items-center justify-content-center"onClick={this.toggleTheme} style={{width:"40px", height:"40px"}}>
-              <img id='themeIcon' src={this.state.themeIcon} data-theme="light" alt='' style={{width:"30px"}}/>
-          </button>
-          </div>
+            <div className="d-flex align-items-center">
+              <button id='themeIconButton' title="Enable Dark Mode" className="btn btn-light rounded-circle btn-light d-flex align-items-center justify-content-center" onClick={toggleTheme} style={{ width: "40px", height: "40px" }}>
+                <img id='themeIcon' src={themeIcon} data-theme="light" alt='' style={{ width: "30px" }} />
+              </button>
+            </div>
 
           </div>
         </div>
       </nav>
     )
   }
-}
+
 
 export default Navbar

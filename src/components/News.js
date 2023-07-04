@@ -1,91 +1,99 @@
-import React, { Component } from 'react'
-import NewsItem from './NewsItem'
-import Spinner from './Spinner'
-import PropTypes from 'prop-types'
+import React, { useState,useEffect} from 'react';
+import NewsItem from './NewsItem';
+import Spinner from './Spinner';
+import PropTypes from 'prop-types';
+import InfiniteScroll from "react-infinite-scroll-component";
 
-export class News extends Component {
-
-  static defaultProps = {
-    country: "in",
-    category: "general"
-  }
-  
-  static propTypes = {
-    country: PropTypes.string,
-    category: PropTypes.string
-  }
-
-
-  constructor() {
-    super();
-    this.state = {
-      articles: [],
-      loading: true,
-      page: 1
-    }
-  }
-
-  
-  async updateNews(){
-    this.setState({loading: true})
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=b16ea3f554b248ccbc272f984806f6a9&page=${this.state.page}&pageSize=${this.props.pageSize}`
-    let data = await fetch(url)
-    let parsedData = await data.json()
-    this.setState({ totalArticles : parsedData.totalResults })
-    this.setState({ articles : parsedData.articles })
-    this.setState({totalPage : Math.ceil(this.state.totalArticles / this.props.pageSize)})
-    this.setState({loading: false})
- }
-
-
-  async componentDidMount() {
-    this.updateNews()
-    var navLinks = document.getElementsByClassName("nav-link");
-    Array.from(navLinks).forEach(function(link) {
-      link.classList.remove("active");
-    });
-    document.getElementById(this.props.elementId).classList.add("active")
-  }
-
+const News = (props) => {
  
+  const [articles, setArticles] = useState([])
+  const [page, setPage] = useState()
+  const [totalResults, setTotalResults] = useState()
 
-  handlePreviousClick = async () => {
-    this.setState({ page: (this.state.page - 1) }, this.updateNews )
-    //Passing the update news function as callback so that the function will run only after the state is changed. State changes are asynchronus so changes does not take effect immediately.
-  }
+  const apiKey = process.env.REACT_APP_NEWS_API
 
-  handleNextClick = async () => {
-    this.setState({ page: (this.state.page + 1) }, this.updateNews )
-    //Passing the update news function as callback so that the function will run only after the state is changed. State changes are asynchronus so changes does not take effect immediately.
-  }
+  
+  useEffect(() => {
+      if (props.category !== "general") {
+        document.title = "NewsMonkey - " + props.categoryName;
+      } else {
+        document.title = "NewsMonkey - Get your daily dose of News for Free!";
+      }
+      setPage(1) // Set page to 1 from undefined on Initial render, this will invoke the another useEffect which will work on page change and when page is not undefined.
+      // Silenced the dependency warning as I only want to run this code on initial render.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  
+  const fetchMoreData = () => {
+    setPage((previous)=>previous+1);
+  };
+  
+  useEffect(() => {
+    const fetchNews = async () => {
+      const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${apiKey}&page=${page}&pageSize=${props.pageSize}`;
+      const data = await fetch(url);
+      const parsedData = await data.json();
 
+      if(page===1){
+        setArticles(parsedData.articles);
+        setTotalResults(parsedData.totalResults);
+      }else{
+        setArticles(prevArticles => prevArticles.concat(parsedData.articles));
+      }
 
-  render() {
+    };
+    // console.log(page)
+    // console.log("totalpage",totalResults)
+    if(page){
+            fetchNews();
+    }
+    // Silenced the dependency warning as I only want to run this code on initial render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]); // Run fetchNews whenever page changes
+
     return (
-      <div className="container my-3">
-        <h1 className='text-center m-4'>NewsMonkey - Top Headlines  {this.props.categoryName.length !== 0 ? "in " + this.props.categoryName : ""}</h1>
-        {this.state.loading && <Spinner/>}
-        <div className="row">
-
-          {!this.state.loading && this.state.articles.map((element) => {
-
-            return <div key={element.url} className="col-md-4 my-2">
-              <NewsItem title={element.title} description={element.description} imageUrl={element.urlToImage} newsUrl={element.url} noImageUrl="https://www.thoughtco.com/thmb/8-ESkbj1uvljxXhh4G-1J8bpiLw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/politician-talking-into-reporters--microphones-168961271-59a09230af5d3a0011ef552d.jpg" date={element.publishedAt} author={element.author} source={element.source.name} />
+      <>
+        <h1 className="text-center m-4">NewsMonkey - Top {props.categoryName} Headlines</h1>
+        <InfiniteScroll
+          dataLength={articles.length}
+          next={fetchMoreData}
+          hasMore={articles.length !== totalResults}
+          loader={<Spinner />}
+          style={{overflow: "hidden"}}
+        >
+          <div className="container">
+            <div className="row">
+              {
+                articles.map((element, index) => (
+                  <div key={index} className="col-md-4 my-2">
+                    <NewsItem
+                      title={element.title}
+                      description={element.description}
+                      imageUrl={element.urlToImage}
+                      newsUrl={element.url}
+                      noImageUrl="https://www.thoughtco.com/thmb/8-ESkbj1uvljxXhh4G-1J8bpiLw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/politician-talking-into-reporters--microphones-168961271-59a09230af5d3a0011ef552d.jpg"
+                      date={element.publishedAt}
+                      author={element.author}
+                      source={element.source.name}
+                    />
+                  </div>
+                ))}
             </div>
-
-          })}
-
-
-
-        </div>
-        <div className="container d-flex justify-content-between">
-          <button onClick={this.handlePreviousClick} disabled={this.state.page <= 1 ? true : false} className="btn btn-outline-primary">&larr; Previous</button>
-          <button onClick={this.handleNextClick} disabled={this.state.page >= this.state.totalPage ? true : false} className="btn btn-outline-primary">Next &rarr;</button>
-        </div>
-      </div>
-    )
+          </div>
+        </InfiniteScroll>
+      </>
+    );
   }
+
+News.defaultProps = {
+  country: "in",
+  category: "general"
 }
 
+News.propTypes = {
+  country: PropTypes.string,
+  category: PropTypes.string
+}
 
-export default News
+export default News;
