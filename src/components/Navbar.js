@@ -52,7 +52,7 @@ const Navbar = (props) => {
 
 
     return (
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar sticky-top navbar-expand-lg bg-body-tertiary">
 
         <div className="container-fluid">
           <Link key="websiteName" style={{ background: '-webkit-linear-gradient(0deg, rgb(216, 0, 255), rgb(0 255 255), red)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: "500" }} className="navbar-brand" to="/">NewsMonkey</Link>
