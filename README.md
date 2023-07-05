@@ -17,10 +17,11 @@ To get started with NewsMonkey, you will need to follow these steps:
 
 NewsMonkey relies on several dependencies to function properly, including:
 
-- Bootstrap v5.3.0
-- Pace.js v1.2.4
-
-These dependencies are included in the HTML file via CDN links, so you do not need to install them separately.
+>>- Bootstrap v5.3.0
+>- Pace.js v1.2.4   
+ > These dependencies are included in the HTML file via CDN links, so you do not need to install them separately.
+- react-infinite-scroll-component  
+  Install it via the command `npm install --save react-infinite-scroll-component`
 
 ## Contributing
 
