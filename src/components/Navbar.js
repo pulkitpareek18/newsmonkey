@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import lightModeIcon from "./../light_mode.svg"
 import darkModeIcon from "./../dark_mode.svg"
 
@@ -55,7 +55,7 @@ const Navbar = (props) => {
       <nav className="navbar sticky-top navbar-expand-lg bg-body-tertiary">
 
         <div className="container-fluid">
-          <Link key="websiteName" style={{ background: '-webkit-linear-gradient(0deg, rgb(216, 0, 255), rgb(0 255 255), red)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: "500" }} className="navbar-brand" to="/">NewsMonkey</Link>
+          <NavLink key="websiteName" style={{ background: '-webkit-linear-gradient(0deg, rgb(216, 0, 255), rgb(0 255 255), red)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: "500" }} className="navbar-brand" to="/">NewsMonkey</NavLink>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon" />
           </button>
@@ -64,15 +64,15 @@ const Navbar = (props) => {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
               <li className="nav-item">
-                <Link className="nav-link" id='home' aria-current="page" to="/">Home</Link>
+                <NavLink className="nav-link" id='home' aria-current="page" to="/">Home</NavLink>
               </li>
 
-              <li><Link className="nav-link" id='business' to="/business">Business</Link></li>
-              <li><Link className="nav-link" id='entertainment' to="/entertainment">Entertainment</Link></li>
-              <li><Link className="nav-link" id='health' to="/health">Health</Link></li>
-              <li><Link className="nav-link" id='science' to="/science">Science</Link></li>
-              <li><Link className="nav-link" id='sports' to="/sports">Sports</Link></li>
-              <li><Link className="nav-link" id='technology' to="/technology">Technology</Link></li>
+              <li><NavLink className="nav-link" id='business' to="/business">Business</NavLink></li>
+              <li><NavLink className="nav-link" id='entertainment' to="/entertainment">Entertainment</NavLink></li>
+              <li><NavLink className="nav-link" id='health' to="/health">Health</NavLink></li>
+              <li><NavLink className="nav-link" id='science' to="/science">Science</NavLink></li>
+              <li><NavLink className="nav-link" id='sports' to="/sports">Sports</NavLink></li>
+              <li><NavLink className="nav-link" id='technology' to="/technology">Technology</NavLink></li>
 
             </ul>
 
